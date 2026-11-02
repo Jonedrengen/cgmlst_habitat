@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+
+help() {
+  echo "Usage: $0 -h"
+}
+
+while getopts "i:o:c:h:" opt; do
+  case $opt in
+    i) input=$OPTARG;;
+    o) output=$OPTARG;;
+    c) config=$OPTARG;;
+    h) help; exit 0;;
+    *) help; exit 1;;
+  esac
+done
+
+if [[ $# -le 1 ]]; then
+  help
+  exit 1
+fi
