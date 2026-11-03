@@ -3,9 +3,35 @@
 
 help() {
   echo "Usage: $0 -h"
+  echo "  -i input file"
+  echo "  -o output file" 
+  echo "  -c config file"
+  echo "  -h help"
 }
 
-while getopts "i:o:c:h:" opt; do
+load_config() {
+    local config="$1"
+    source $config
+    if source $config; then
+        echo "Config loaded"
+        return 0
+    fi
+    echo "[Error] Failed to load config"
+    return 1
+}
+
+load_utils() {
+    local utils_script="$1"
+    if source $utils_script; then
+        echo "Utils loaded"
+        return 0
+    fi
+    echo "[Error] Failed to load utils"
+    return 1
+}
+
+start_time=$(date +%s)
+while getopts "i:o:c:h" opt; do
   case $opt in
     i) input=$OPTARG;;
     o) output=$OPTARG;;
@@ -14,8 +40,22 @@ while getopts "i:o:c:h:" opt; do
     *) help; exit 1;;
   esac
 done
-
 if [[ $# -le 1 ]]; then
+  echo; echo "[Error] Not enough arguments"; echo
   help
   exit 1
 fi
+
+
+
+main() {
+    load_config "$config"
+    load_utils "${source_dir}/utils/utils.sh"
+    
+}
+
+main "$@"
+
+#end timer
+end_time=$(date +%s)
+printf "Time: %s sec passed\n" $((end_time-start_time))
